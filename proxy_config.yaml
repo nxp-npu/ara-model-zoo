@@ -1,0 +1,69 @@
+#*****************************************************************************
+# Copyright 2025-2026 NXP
+# License: LA_OPT_NXP_Software_License
+#
+# See the LICENSE for more details.
+# NXP Confidential and Proprietary. This software is owned or controlled by
+# NXP and may only be used strictly in accordance with the applicable license
+# terms. By expressly accepting such terms or by downloading, installing,
+# activating and/or otherwise using the software, you are agreeing that
+# you have read, and that you agree to comply with and are bound by, such
+# license terms.  If you do not agree to be bound by the applicable license
+# terms, then you may not retain, install, activate or otherwise
+# use the software.
+#*****************************************************************************
+---
+logger:
+    sink_type: console # 1. possible values are file/console/syslog 2. no default sink_type is set
+    file_sink_path: "/var/log/proxy.log" # no default file_sink_path is set
+    file_rotation: true
+    file_rotate_on_size_gt: 1024
+    file_rotate_max_files_to_retain: 4
+    default_log_level: "INFO" # 1. possible values are "WARNING" "ERROR" "TRACE" "DEBUG" "INFO"  2. default value is "INFO"
+    DeviceManager: "INFO" # 1. possible values are "WARNING" "ERROR" "TRACE" "DEBUG" "INFO"  2. default value is "INFO"
+proxy:
+    # TRANSPORTER CONFIG FIELDS
+    interface_name: "ara_interface" # Default value is "Ara Connection", any string value acceptable, all interfaces will have same name
+    # transporter_type: "UV_TRANSPORTER"
+    interface_type: "IPV4" # possible values are IPV4/SOCKET/NAMED_PIPE (SOCKET for Linux; NAMED_PIPE for Windows)
+    # list of ip_address and corresponding ports (in same order), sizes of list of ip_address and port must be same
+    interface_ip_address: ["127.0.0.1"]
+    interface_port: [5000]
+    # list of socket files for proxy on linux
+    # interface_socket_file: ["/var/run/proxy.sock"]
+    # list of named pipes for proxy on windows
+    # interface_named_pipe: ["\\\\.\\pipe\\proxy_pipe"]
+    # DEVICE MANAGEMENT CONFIG FIELDS
+    dm_firmware_path: ./mcp0
+    device_interface: "all" # 1.possible values are usb/pci/pcie/all  2.default is "usb"  3. if "all" is given, usb device will get priority
+    #This flag can be set to true to set the device to a high power state when proxy is started.By default this option is turned off. This is a linux specific flag
+    on_boot_auto_device_active_power: false
+    dm_supported_firmware_versions: [32779, 65794, 131072, 131073]
+    daemon: true
+    vpu_boot_en: true
+    check_model_integrity: true # enable/disable model integrity check, default value is true
+    #dm_dbus_system_path: "" #  for LINUX use only. Suspend resume functionality in proxy is enabled when following config has path of dbus socket as per the host device
+    ddr_train_on_s3_exit: true # for LINUX use only. when true, the proxy retrains ddr when host exits S3 sleep. when false, the proxy can continue with without retraining ddr(when device has independant power source) and ddr retrain time is saved.
+    interrupt_based_response_reading: false # flag to select proxy request response reading as polling based approach(default) or interrupt based approach
+    #POWER MANAGEMENT CONFIG
+    power_policy:
+        mode: "manual" #supported values manual/auto
+        idle_wait_time_ms: 5 #applicable only in auto mode. Specifies the idle time (in milliseconds) after which the device transitions to the L1 (idle) power state when no workload is being processed. Must be greater than or equal to 5 ms when auto mode is selected.
+        default_active_power_state: "A1" #applicable only in case of auto mode. Supported values are A1, A2, A3
+    #THROTTLING CONFIG
+    dm_mcp_throt_enable: 1 # default value to enable throttle
+    dm_mcp_throt_delay: 1000000 # time(in micro seconds) for inference to wait before submitting to device while throttling is active
+    #INFERENCE CONFIG
+    inf_timeout_us: 60000000 #timeout value in microseconds , default value is 60000000
+    model_ld_timeout_us: 150000000 #timeout value in microseconds , default value is 150000000
+    llm_inf_timeout_us: 90000000 #timeout value in microseconds for LLM default value is 90000000
+    memory_manager:
+        mem_size: 17179869184 # memory size in bytes 17179869184 (16GB), for 8GB provide: 8589934592
+    dram:
+        boardname: "willow"
+        cfg_bin: art/linux/x86/hw_utils/ddr_config/ddr_cfg_31.bin # path to ddr configuration bin
+        training_enable: false # enable ddr training or not
+        lpddr4x: 0
+        lpddrpad4x: 0
+        rank: 0 #for rank1: 1/ for rank2: 0
+        memory_part: 1 #for 8gb part:1 / for 16gb part: 2

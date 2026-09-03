@@ -1,0 +1,17 @@
+Layers:
+  _model_23_Add_1:
+    Precision: INT16
+  _model_23_Sub:
+    Precision: INT16
+  _model_23_Concat_2:
+    Precision: INT16
+  _model_23_Mul_2:
+    Precision: INT16
+  _model_23_Sigmoid:
+    Precision: INT16
+
+  
+  
+
+
+

@@ -1,0 +1,81 @@
+# Copyright 2026 NXP
+
+modelname: "yolov8n_face"
+out: "../output"
+precompiled_model_link_path: "./tmp/path/to/dvm"
+
+network:
+    srcfw: "onnx"
+    inet: ../output/compiled_model/quantized_model.onnx
+    iwt: ../output/compiled_model/quantized_model.onnx
+    dim: "3,640,640"
+    images:
+        quantize: ../output/preprocessed_images_quantize
+        verify: ../output/preprocessed_images_verify
+
+dvconvert:
+    np: False
+    inode: "input_0"
+    onode: "/functional_module_mul/Mul_output_0:/functional_module_sigmoid/Sigmoid_output_0:/functional_module_mul_2/Mul_output_0:/functional_module_sigmoid_1/Sigmoid_output_0"
+    data_format: "CHW"
+    encodings_json_file: ../output/compiled_model/quantization_encodings.json
+
+dvnc:
+    qmode: 9
+    asymmetric: false
+    layeroutput: False
+    qonly: False
+    bc: False
+    adjust: null
+    clampqlimits: true
+    use_tf_enhanced_encoding: true
+
+inference:
+    endpoint: 0
+    interface: IPV4
+    socket: "127.0.0.1:5000"
+
+preprocess:
+    input_shape:
+        c: 3
+        h: 640
+        w: 640
+    mean:
+        r: 0
+        g: 0
+        b: 0
+    scale:
+        r: 0.0039 #1/255
+        g: 0.0039
+        b: 0.0039
+    resize:
+        aspect_ratio: True
+        scale: 1
+        interpolation: LINEAR
+        padding: 114
+    bgr_to_rgb: True
+    to_float: False
+    hwc_to_chw: True
+
+postprocess:
+    tags: ../output/tags.txt
+    label: ""
+    image_overlay: True
+    dump_output: True
+    iou_threshold: 0.70
+    nms_score_threshold: 0.25
+    top_k: 500
+    print_accuracy_metrics: true
+    model_type: face_detection
+
+calibration_data:
+    quantize: ../output/quant
+    verify: null
+    quantize_list: ./calibration_image_set.txt
+
+evaluation:
+    type: widerface
+    split: val
+
+quantization:
+    quantization_config: ./quantization_config.json

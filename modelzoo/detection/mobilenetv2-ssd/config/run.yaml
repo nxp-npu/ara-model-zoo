@@ -1,0 +1,85 @@
+# Copyright 2026 NXP
+
+modelname: "mobilenetv2-ssd"
+out: "../output"
+precompiled_model_link_path: "./tmp/path/to/dvm"
+
+network:
+    srcfw: "onnx"
+    inet: ../output/compiled_model/model.onnx
+    iwt: ../output/compiled_model/model.onnx
+    dim: "3,300,300"
+    images:
+        quantize: ../output/preprocessed_images_quantize
+        verify: ../output/preprocessed_images_verify
+
+dvconvert:
+    np: False
+    inode: "input"
+    onode: "concat_1:concat"
+    data_format: "CHW"
+    rsmax: False
+    ignore_mse: True
+    tg: False
+    dynamic: false
+    dynamic_input: false
+    no_final_perm_opt: false
+
+dvnc:
+    qmode: 9
+    asymmetric: False
+    layeroutput: False
+    qonly: False
+    bc: False
+    adjust: null
+    clampqlimits: true
+    #use_tf_enhanced_encoding: True
+
+inference:
+    endpoint: 0
+    interface: IPV4
+    socket: "127.0.0.1:5000"
+
+preprocess:
+  input_shape:
+    c: 3
+    h: 300
+    w: 300
+  mean:
+    r: 127.5
+    g: 127.5
+    b: 127.5
+  scale:
+    r: 0.007843137
+    g: 0.007843137
+    b: 0.007843137
+  resize:
+    aspect_ratio: False
+    scale: 1.0
+    interpolation: LINEAR
+    padding: null
+  bgr_to_rgb: True
+  to_float: True
+  hwc_to_chw: True
+
+postprocess:
+  label: ""
+  image_overlay: True
+  dump_output: True
+  iou_threshold: 0.70
+  nms_score_threshold: 0.25
+  top_k: 100
+  print_accuracy_metrics: True
+  model_type: detection
+
+calibration_data:
+    quantize: ../output/quant
+    quantize_list: ./calibration_image_set.txt
+    verify: null
+
+quantization:
+  quantization_config: ./quantization_config.json
+
+evaluation:
+  type: coco
+  split: val

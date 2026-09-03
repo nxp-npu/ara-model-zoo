@@ -1,0 +1,13 @@
+__pycache__/
+env/
+output*/
+*.log
+.rsyncignore
+.vscode
+.zed
+.ruff_cache
+.venv
+*.egg-info
+uv.lock
+.DS_Store
+*.csv

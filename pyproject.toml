@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Ara-model-zoo"
+version = "1.0"
+description = "Ara-model-zoo is the evaluation and benchmarking harness for Ara2's model zoo"
+readme = "README.md"
+requires-python = ">=3.12"
+
+dependencies = [
+    "numpy>=2.2.4",
+    "pyyaml==6.0.3",
+    "opencv-python-headless==4.12.0.88",
+    "pycocotools==2.0.10",
+    "tabulate==0.9.0",
+    "docker==7.1.0",
+    "torch>=2.10.0",
+    "onnx>=1.20.1",
+    "protobuf>=7.35",
+    "pydantic>=2.12.5",
+    "virtualenv>=21.2.0,<21.5.0",
+    "pydantic>=2.12",
+    "colorama==0.4.6",
+    "tqdm>=4.67",
+    "gdown>=6.0.0",
+    "torchvision==0.26.0",
+    "pillow",
+    "scipy",
+    "huggingface_hub>=1.27.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "ruff>=0.15.2",
+    "ty>=0.0.18",
+    "pre-commit>=4.5.1",
+    "onnxruntime>=1.24.3",
+]
+sparrow = [
+    "pandas==2.3.0",
+    "matplotlib==3.10.3",
+    "datasets==3.6.0",
+    "dependency-injector==4.48.1",
+    "psutil==7.0.0",
+    "peft==0.16.0",
+    "pycocotools==2.0.10",
+    "sentencepiece==0.2.0",
+    "transformers>=4.52.4",
+    "tqdm==4.67.1",
+    "ultralytics==8.3.164",
+    "tabulate",
+    "jsonschema==4.25.1",
+    "onnxscript==0.5.1",
+    "onnxruntime>=1.24.3",
+    "faster_coco_eval",
+    "bokeh",
+    "fvcore",
+    "torch-pruning",
+]
+
+[tool.setuptools]
+packages = ["core", "modelzoo"]

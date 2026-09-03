@@ -1,0 +1,82 @@
+# Copyright 2026 NXP
+
+modelname: "scrfd_10g"
+out: "../output"
+precompiled_model_link_path: "./tmp/path/to/dvm"
+
+network:
+  srcfw: "onnx"
+  inet: ../output/compiled_model/model.onnx
+  iwt: ../output/compiled_model/model.onnx
+  dim: "3,640,640"
+  images:
+    quantize: ../output/preprocessed_images_quantize
+    verify: ../output/preprocessed_images_verify
+
+dvconvert:
+  np: false
+  inode: "input.1"
+  onode: "441_sigmoid:443:444:464_sigmoid:466:467:487_sigmoid:489:490"
+  data_format: "CHW"
+  ignore_mse: true
+  tg: true
+
+dvnc:
+  qmode: 9
+  asymmetric: false
+  layeroutput: false
+  qonly: false
+  bc: false
+  adjust: null
+  clampqlimits: true
+
+inference:
+  endpoint: 0
+  interface: IPV4
+  socket: "127.0.0.1:5000"
+
+preprocess:
+  input_shape:
+    c: 3
+    h: 640
+    w: 640
+  mean:
+    r: 127.5
+    g: 127.5
+    b: 127.5
+  scale:
+    r: 0.0078125
+    g: 0.0078125
+    b: 0.0078125
+  resize:
+    aspect_ratio: true
+    scale: 1
+    interpolation: AREA
+    padding: 0
+  bgr_to_rgb: true
+  to_float: false
+  hwc_to_chw: true
+
+postprocess:
+  tags: null
+  label: "Faces"
+  image_overlay: true
+  dump_output: true
+  iou_threshold: 0.4
+  nms_score_threshold: 0.5
+  top_k: 1000
+  print_accuracy_metrics: true
+  model_type: face_detection
+
+calibration_data:
+  quantize: ../output/quant
+  verify: null
+  quantize_list: ./calibration_image_set.txt
+
+evaluation:
+  type: widerface
+  split: val
+
+quantization:
+  scheme: PTQ
+  quantization_config: ./quantization_config.json

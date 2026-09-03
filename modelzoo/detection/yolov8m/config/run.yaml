@@ -1,0 +1,83 @@
+# Copyright 2026 NXP
+
+modelname: "yolov8m"
+out: "../output"
+precompiled_model_link_path: "hf://nxp/YOLOv8/yolov8m.dvm"
+
+network:
+    srcfw: "onnx"
+    inet: ../output/compiled_model/model.onnx
+    iwt: ../output/compiled_model/model.onnx
+    dim: "3,640,640"
+    images:
+        quantize: ../output/preprocessed_images_quantize
+        verify: ../output/preprocessed_images_verify
+
+dvconvert:
+    tg: true
+    ignore_mse: true
+    np: False
+    inode: "images"
+    onode: "/model.22/Mul_2_output_0:/model.22/Sigmoid_output_0"
+    data_format: "CHW"
+    adjust_file: ./adjust.yaml
+
+dvnc:
+    qmode: 9
+    asymmetric: false
+    layeroutput: False
+    qonly: False
+    bc: False
+    adjust: null
+    clampqlimits: true
+    use_tf_enhanced_encoding: true
+
+inference:
+    endpoint: 0
+    interface: IPV4
+    socket: "127.0.0.1:5000"
+
+preprocess:
+  input_shape:
+    c: 3
+    h: 640
+    w: 640
+  mean:
+    r: 0
+    g: 0
+    b: 0
+  scale:
+    r: 0.0039 #1/255
+    g: 0.0039
+    b: 0.0039
+  resize:
+    aspect_ratio: True
+    scale: 1
+    interpolation: LINEAR
+    padding: 114
+  bgr_to_rgb : True
+  to_float: True
+  hwc_to_chw: True
+
+postprocess:
+  tags: ../output/tags.txt
+  label: ""
+  image_overlay: True
+  dump_output: True
+  iou_threshold: 0.70
+  nms_score_threshold: 0.25 #0.001
+  top_k: 100
+  print_accuracy_metrics: True
+  model_type: detection
+
+calibration_data:
+    quantize: ../output/quant
+    verify: null
+    quantize_list: ./calibration_image_set.txt
+
+evaluation:
+    type: coco
+    split: val
+
+quantization:
+  quantization_config: ./quantization_config.json

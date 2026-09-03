@@ -1,0 +1,19 @@
+# Copyright 2026 NXP
+
+Layers:
+  _model_22_Sub:
+    Precision: INT16
+  _model_22_Add_1:
+    Precision: INT16
+  _model_22_Add_2:
+    Precision: INT16
+  _model_22_Sub_1:
+    Precision: INT16
+  _model_22_Div_1:
+    Precision: INT16
+  _model_22_Concat_5:
+    Precision: INT16
+  _model_22_Mul_2:
+    Precision: INT16
+  _model_22_Sigmoid:
+    Precision: INT16

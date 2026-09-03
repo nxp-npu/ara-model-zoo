@@ -1,0 +1,92 @@
+# Copyright 2026 NXP
+
+modelname: "yolov10s"
+out: "../output"
+precompiled_model_link_path: "./tmp/path/to/dvm"
+
+network:
+    srcfw: "onnx"
+    inet: ../output/compiled_model/model.onnx
+    iwt: ../output/compiled_model/model.onnx
+    dim: "3,640,640"
+    images:
+        quantize: ../output/preprocessed_images_quantize
+        verify: ../output/preprocessed_images_verify
+
+dvconvert:
+  lname: null
+  lshape: null
+  np: False
+  inode: "images"
+  onode: "/model.23/Mul_2_output_0:/model.23/Sigmoid_output_0"
+  rsmax: False
+  data_format: "CHW"
+  ignore_mse: True
+  state_name: null
+  state_shape: null
+  tg: True
+  dynamic: false
+  dynamic_input: false
+  no_final_perm_opt: false
+  dformat: null
+  adjust_file: ./adjust.yaml
+
+dvnc:
+    qmode: 9
+    asymmetric: false
+    layeroutput: False
+    qonly: False
+    bc: False
+    adjust: null
+    clampqlimits: true
+    use_tf_enhanced_encoding: true
+
+inference:
+    endpoint: 0
+    interface: IPV4
+    socket: "127.0.0.1:5000"
+
+preprocess:
+  input_shape:
+    c: 3
+    h: 640
+    w: 640
+  mean:
+    r: 0
+    g: 0
+    b: 0
+  scale:
+    r: 0.0039 # 1/255, truncated to match old modelzoo
+    g: 0.0039
+    b: 0.0039
+  resize:
+    aspect_ratio: True
+    scale: 1
+    interpolation: LINEAR
+    padding: 114
+  bgr_to_rgb : True
+  to_float: True
+  hwc_to_chw: True
+
+postprocess:
+  tags: ../output/tags.txt
+  label: ""
+  image_overlay: True
+  dump_output: True
+  iou_threshold: 0.70
+  nms_score_threshold: 0.25 # overridden to 0.001 by run_evalation.py for eval
+  top_k: 100
+  print_accuracy_metrics: True
+  model_type: detection
+
+calibration_data:
+    quantize: ../output/quant
+    verify: ../../../../testimages
+    quantize_list: ./calibration_image_set.txt
+
+evaluation:
+    type: coco
+    split: val
+
+quantization:
+  quantization_config: ./quantization_config.json

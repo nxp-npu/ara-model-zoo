@@ -1,0 +1,84 @@
+# Copyright 2026 NXP
+
+modelname: "efficientnet_lite4"
+out: "../output"
+precompiled_model_link_path: "./tmp/path/to/dvm"
+
+network:
+    srcfw: "onnx"
+    inet: ../output/compiled_model/model.onnx
+    iwt: ../output/compiled_model/model.onnx
+    dim: "3,300,300"
+    images:
+        quantize: ../output/preprocessed_images_quantize
+        verify: ../output/preprocessed_images_verify
+
+dvconvert:
+    np: False
+    inode: "input"
+    onode: "output"
+    rsmax: False
+    ignore_mse: False
+    tg: True
+    dynamic: false
+    dynamic_input: false
+    no_final_perm_opt: false
+
+dvnc:
+    qmode: 9
+    asymmetric: false
+    layeroutput: False
+    qonly: False
+    bc: False
+    adjust: null
+    clampqlimits: true
+    use_tf_enhanced_encoding: true
+
+inference:
+    endpoint: 0
+    interface: IPV4
+    socket: "127.0.0.1:5000"
+
+preprocess:
+    input_shape:
+        c: 3
+        h: 300
+        w: 300
+    resize:
+        interpolation: BILINEAR
+        aspect_ratio: false
+        padding: null
+    centercrop:
+        fraction: 0.875
+    mean:
+        r: 127.0
+        g: 127.0
+        b: 127.0
+    scale:
+        r: 0.0078125
+        g: 0.0078125
+        b: 0.0078125
+    bgr_to_rgb: True
+    to_float: True
+    hwc_to_chw: True
+
+postprocess:
+    label: null
+    image_overlay: True
+    top_k: 5
+    dump_output: True
+    print_accuracy_metrics: True
+    model_type: classification
+
+calibration_data:
+    quantize: ../output/quant
+    quantize_list: ./calibration_image_set.txt
+    verify: null
+
+
+quantization:
+    quantization_config: ./quantization_config.json
+
+evaluation:
+    type: imagenet
+    split: val

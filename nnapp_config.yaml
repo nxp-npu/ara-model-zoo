@@ -1,0 +1,128 @@
+#*****************************************************************************
+# Copyright 2025-2026 NXP
+# License: LA_OPT_NXP_Software_License
+#
+# See the LICENSE for more details.
+# NXP Confidential and Proprietary. This software is owned or controlled by
+# NXP and may only be used strictly in accordance with the applicable license
+# terms. By expressly accepting such terms or by downloading, installing,
+# activating and/or otherwise using the software, you are agreeing that
+# you have read, and that you agree to comply with and are bound by, such
+# license terms.  If you do not agree to be bound by the applicable license
+# terms, then you may not retain, install, activate or otherwise
+# use the software.
+#*****************************************************************************
+---
+nnapp:
+    log:
+        # default dump path is app working directory
+        dump_path: ""
+        # max error log count. If 0 or negative value is specified, then the max_error_count is INT32_MAX else it is the positive value specified
+        max_error_count: 1
+        # name tag for log files. log files will be named as <logname>_<tag>_<timestamp>.<extension>
+        # default is empty
+        tag: "r1.1.1"
+    # this section contains all the connection related params
+    connection:
+        # type of connection to establish with proxy. options - [tcp | unix | named_pipe]
+        type: "tcp"
+        # proxy host ip for tcp connection
+        ip: "127.0.0.1"
+        # proxy port for tcp connection
+        port: 5000
+        # socket file for unix connection
+        sock_file: "/var/run/proxy.sock"
+        # named pipe for windows OS
+        named_pipe_path: "\\\\.\\pipe\\proxy_pipe"
+        # To enable shm-sfd mode
+        #    shm_mem_file_path: /dev/shm/shm_file.dat
+        #    shm_mem_size: 512
+    # this section contains all the stats related params
+    stats:
+        # if True, device stats will be reported
+        device_stats: True
+        # inference stats verbosity level
+        # options - [0 (for summary stats) | 1 (for summary & batch stats) | 2 (for summary & batch & iteration stats) ]
+        infer_stats: 2
+
+    # this section contains all the mode related params
+    mode:
+        # mode in which nnapp can run, options - [ infer | ifc_perf | factory_test | list_devices]
+        type: "infer"
+        # this section contains all the infer mode related params
+        infer:
+            # infer mode can be of 3 types, options - [sync | async]
+            type: "async"
+            # this section contains all the infer sync mode related params
+            sync:
+                # if this flag is TRUE, then the input directory of each model is iterated only once.
+                # else, the input directory is iterated for model_param.iterations times
+                run_once_and_for_all: False
+                utilization_stats: False
+                sleep_between_infer_usec: 50 #value of sleep (in microseconds) between each inference
+                # dump outputs with timestamp
+                dump_with_timestamp: False
+                # this section contains all the model related params for infer sync mode
+                # multiple models can be mentioned here as key-value pairs with integer keys starting from 0 as below
+                models:
+                    # key to the first model to be run under this mode
+                    0:
+                        # model name
+                        name: ""
+                        # path to the model.dvm. this is a mandatory parameter. incorrect entry will fail the app
+                        path: ""
+                        # path to the raw input files
+                        # if specified, then the directory structure should be :
+                        # <input_path>/input_image_name/quantized/layer<layerId>-<blobName>-<blobId>_input_dv.dat
+                        # if kept empty, then inferences will be run on random inputs
+                        input_path: ""
+                        # output path where the inference outputs would be dumped
+                        # if kept empty, then outputs wouldn't be dumped
+                        # if input_path is empty (inferences will be run on random inputs), then also outputs wouldn't be dumped
+                        output_path: ""
+                        # number of iterations to run
+                        iterations: 10
+                        # list of end-points.
+                        # input could be "all" or "usb" or "pci" or list of device-ids on which inferences are to be run, like ["0", "1", "4"] or ["1", "2"], etc
+                        # options - [["all"] | ["usb"] | ["pci"] | ["0", "1"] or ["0", "1", "4"] or ["1", "2"], etc]
+                        ep_list: ["all"]
+            # this section contains all the infer async mode related params
+            async:
+                # if this flag is TRUE, then the input directory of each model is iterated only once.
+                # else, the input directory is iterated for model_param.infer_bundle_size * model_param.iterations times
+                run_once_and_for_all: False
+                utilization_stats: False
+                # dump outputs with timestamp
+                dump_with_timestamp: False
+                # this section contains all the model related params for infer async mode
+                models:
+                    0:
+                        name: ""
+                        path: ""
+                        input_path: ""
+                        output_path: ""
+                        # number of inferences to run in each iteration
+                        infer_bundle_size: 128
+                        # number of iterations to run
+                        iterations: 10
+                        ep_list: ["all"]
+        # this section contains all the interface performance mode related params
+        ifc_perf:
+            # generate report
+            report: True
+            # end point id to generate the report for, or "all"
+            end_points: "0"
+
+        # this section contains all the device power management and power monitoring related params
+        power_switch:
+            mode: "info" #supported values per_ep, all_ep, pcie, usb, info
+            default_state:
+                "A2" #  all endpoints are switched to this power state, honored only in case of all_ep mode
+                #  supported values A1, A2, A3, L1
+                #  in pcie mode, endpoints field refers to pcie devices (not total number of eps connected)
+                #  in usb mode,  endpoints field refers to usb devices (not total number of eps connected)
+                #  info mode is used to observe power and not switching. It will fetch power states info of all available devices
+            #below field is only applicable if mode is per_ep, pcie, usb. In these modes , devices will be switched to corresponding power states provided
+            endpoints:
+                "0": "A2" # supported values A1, A2, A3, L1
+                "1": "A3"

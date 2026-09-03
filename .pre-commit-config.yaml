@@ -1,0 +1,38 @@
+# Copyright 2026 NXP
+
+repos:
+    # General file hygiene
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v5.0.0
+      hooks:
+          - id: trailing-whitespace
+          - id: end-of-file-fixer
+          - id: check-yaml
+          - id: check-toml
+          - id: check-merge-conflict
+          - id: debug-statements # catches leftover breakpoint()/pdb
+
+    - repo: https://github.com/astral-sh/ruff-pre-commit
+      rev: v0.15.12
+      hooks:
+          - id: ruff-check
+          - id: ruff-format
+
+    - repo: local
+      hooks:
+          - id: ty
+            name: ty (type check)
+            entry: ty check
+            language: system # uses your venv's ty
+            types: [python]
+            pass_filenames: true
+
+    - repo: local
+      hooks:
+          - id: pytest
+            name: pytest (all tests)
+            entry: pytest tests
+            language: system # uses your venv's pytest
+            types: [python]
+            pass_filenames: false
+            always_run: true

@@ -1,0 +1,83 @@
+# Copyright 2026 NXP
+
+modelname: "mobilenetv2"
+out: "../output"
+precompiled_model_link_path: "./tmp/path/to/dvm"
+
+network:
+    srcfw: "onnx"
+    inet: ../output/compiled_model/model.onnx
+    iwt: ../output/compiled_model/model.onnx
+    dim: "3,224,224"
+    tags: null
+    label: null
+    pcfg: null
+    images:
+        quantize: ../output/preprocessed_images_quantize
+        verify: ../output/preprocessed_images_verify
+
+dvconvert:
+    np: False
+    inode: "input"
+    onode: "MobilenetV2/Predictions/Softmax"
+    data_format: "CHW"
+    adjust_file: ./adjust.yaml
+
+dvnc:
+    qmode: 9
+    asymmetric: false
+    layeroutput: False
+    qonly: False
+    bc: False
+    adjust: null
+    clampqlimits: true
+    use_tf_enhanced_encoding: true
+
+inference:
+    endpoint: 0
+    interface: IPV4
+    socket: "127.0.0.1:5000"
+
+preprocess:
+    input_shape:
+        c: 3
+        h: 224
+        w: 224
+    mean:
+        r: 127.5
+        g: 127.5
+        b: 127.5
+    scale:
+        r: 0.007843137
+        g: 0.007843137
+        b: 0.007843137
+    resize:
+        resize_size: 224
+        aspect_ratio: False
+        scale: 1
+        interpolation: LINEAR
+        padding: null
+    centercrop:
+        fraction: 0.875
+    bgr_to_rgb: True
+    to_float: True
+    hwc_to_chw: True
+
+postprocess:
+    tags: ../output/tags.txt
+    label: ""
+    image_overlay: True
+    dump_output: False
+    top_k: 10
+
+calibration_data:
+    quantize: ../output/quant
+    verify: null
+    quantize_list: ./calibration_image_set.txt
+
+evaluation:
+    type: imagenet
+    split: val
+
+quantization:
+    quantization_config: ./quantization_config.json

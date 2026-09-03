@@ -1,0 +1,181 @@
+{
+  "defaults": {
+    "ops": {
+      "is_output_quantized": "True",
+      "observer": "moving_average_minmax",
+      "per_channel_quantization": "False",
+      "is_symmetric": "False",
+      "initializer": {
+        "is_quantized": "True",
+        "dtype": "int8",
+        "is_symmetric": "True",
+        "per_channel_quantization": "False",
+        "observer": "moving_average_minmax"
+      },
+      "input_dtype": "int8",
+      "output_dtype": "int8"
+    },
+    "params": {
+      "is_quantized": "True",
+      "is_symmetric": "True",
+      "dtype": "int8",
+      "observer": "moving_average_perchannel_minmax",
+      "per_channel_quantization": "True"
+    }
+  },
+  "params": {
+    "bias": {
+      "is_quantized": "False",
+      "dtype": "int16"
+    }
+  },
+  "op_type": {
+    "BatchNorm2d": {
+      "params": {
+        "running_mean": {
+          "is_quantized": "False",
+          "dtype": "int8"
+        },
+        "running_var": {
+          "is_quantized": "False",
+          "dtype": "int8"
+        }
+      },
+      "input_dtype": "int8",
+      "output_dtype": "int8"
+    },
+    "Conv2d": {
+      "params": {
+        "weight": {
+          "dtype": "int8"
+        }
+      },
+      "input_dtype": "int8",
+      "output_dtype": "int8"
+    },
+    "SiLU": {
+      "input_dtype": "int8",
+      "output_dtype": "int8"
+    },
+    "Sigmoid": {
+      "input_dtype": "int16",
+      "output_dtype": "int16",
+      "is_symmetric": "True"
+    },
+    "Add": {
+      "is_output_quantized": "True",
+      "input_dtype": "int8",
+      "output_dtype": "int8"
+    },
+    "Divide": {
+      "is_symmetric": "True",
+      "input_dtype": "int16",
+      "output_dtype": "int16"
+    },
+    "Subtract": {
+      "is_symmetric": "True",
+      "input_dtype": "int16",
+      "output_dtype": "int16"
+    },
+    "Cast": {
+      "is_output_quantized": "False"
+    },
+    "FloorDivide": {
+      "is_output_quantized": "False"
+    },
+    "Concat": {
+      "is_output_quantized": "True",
+      "input_dtype": "int8",
+      "output_dtype": "int8"
+    },
+    "Dropout": {
+      "is_output_quantized": "False",
+      "is_input_quantized": "False"
+    },
+    "Identity": {
+      "is_output_quantized": "False",
+      "is_input_quantized": "False"
+    },
+    "Flatten": {
+      "is_input_quantized": "False"
+    },
+    "MatMul": {
+      "per_channel_quantization": "False"
+    },
+    "LayerNorm": {
+      "per_channel_quantization": "False",
+      "is_output_quantized": "False",
+      "is_input_quantized": "False",
+      "params": {
+        "weight": {
+          "is_quantized": "False"
+        },
+        "bias": {
+          "is_quantized": "False"
+        }
+      }
+    },
+    "Shape": {
+      "is_output_quantized": "False"
+    },
+    "model.22.functional_module_cat_18": {
+      "is_output_quantized": "False"
+    },
+    "model.22.functional_module_mul": {
+      "is_symmetric": "True",
+      "is_output_quantized": "True",
+      "input_dtype": "int16",
+      "output_dtype": "int16"
+    },
+    "model.22.functional_module_cat_17": {
+      "is_symmetric": "True",
+      "is_output_quantized": "True",
+      "input_dtype": "int16",
+      "output_dtype": "int16"
+    },
+    "model.22.functional_module_add_6": {
+      "is_symmetric": "True",
+      "is_output_quantized": "True",
+      "input_dtype": "int16",
+      "output_dtype": "int16"
+    },
+    "model.22.functional_module_add_7": {
+      "is_symmetric": "True",
+      "is_output_quantized": "True",
+      "input_dtype": "int16",
+      "output_dtype": "int16"
+    }
+  },
+  "supergroups": [
+    {
+      "op_list": [
+        "Conv",
+        "Relu"
+      ]
+    },
+    {
+      "op_list": [
+        "Conv",
+        "Clip"
+      ]
+    },
+    {
+      "op_list": [
+        "ConvTranspose",
+        "Relu"
+      ]
+    },
+    {
+      "op_list": [
+        "Add",
+        "Relu"
+      ]
+    }
+  ],
+  "model_input": {
+    "is_input_quantized": "True"
+  },
+  "model_output": {
+    "is_output_quantized": "False"
+  }
+}

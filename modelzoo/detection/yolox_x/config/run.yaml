@@ -1,0 +1,80 @@
+# Copyright 2026 NXP
+
+modelname: "yolox_x"
+out: "../output"
+precompiled_model_link_path: "hf://nxp/YOLOX-Detection-Ara240/yolox_x.dvm"
+
+network:
+    srcfw: "onnx"
+    inet: ../output/compiled_model/model.onnx
+    iwt: ../output/compiled_model/model.onnx
+    dim: "3,640,640"
+    images:
+        quantize: ../output/preprocessed_images_quantize
+        verify: ../output/preprocessed_images_verify
+
+dvconvert:
+    np: False
+    inode: "images"
+    onode: "output"
+    data_format: "CHW"
+
+
+dvnc:
+    qmode: 9
+    asymmetric: False
+    layeroutput: False
+    qonly: False
+    bc: False
+    adjust: null
+    clampqlimits: False
+    use_tf_enhanced_encoding: True
+
+inference:
+    endpoint: 0
+    interface: IPV4
+    socket: "127.0.0.1:5000"
+
+preprocess:
+  input_shape:
+    c: 3
+    h: 640
+    w: 640
+  mean:
+    r: 0
+    g: 0
+    b: 0
+  scale:
+    r: 1
+    g: 1
+    b: 1
+  resize:
+    aspect_ratio: True
+    scale: 1.0
+    interpolation: LINEAR
+    padding: 114
+  bgr_to_rgb : False
+  to_float: False
+  hwc_to_chw: True
+
+postprocess:
+  label: ""
+  image_overlay: True
+  dump_output: True
+  iou_threshold: 0.70 # 0.70
+  nms_score_threshold: 0.25 #0.001 #0.25
+  top_k: 500
+  print_accuracy_metrics: True
+  model_type: detection
+
+calibration_data:
+    quantize: ../output/quant
+    verify: null
+    quantize_list: ./calibration_image_set.txt
+
+quantization:
+  quantization_config: ./quantization_config.json
+
+evaluation:
+  type: coco
+  split: val

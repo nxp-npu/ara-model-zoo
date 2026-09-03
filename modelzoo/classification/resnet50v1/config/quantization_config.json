@@ -1,0 +1,72 @@
+{
+  "defaults": {
+    "ops": {
+      "is_output_quantized": "True",
+      "observer": "movingaverageminmax",
+      "per_channel_quantization": "False",
+      "is_symmetric": "False",
+      "input_dtype": "int8",
+      "output_dtype": "int8"
+    },
+    "params": {
+      "is_quantized": "True",
+      "is_symmetric": "True",
+      "dtype": "int8",
+      "observer": "moving_average_perchannel_minmax",
+      "per_channel_quantization": "True"
+    }
+  },
+  "params": {
+    "bias": {
+      "is_quantized": "False"
+    }
+  },
+  "op_type": {
+    "BatchNorm2d": {
+      "params": {
+        "weight": {
+          "per_channel_quantization": "False",
+          "observer": "movingaverageminmax"
+        },
+        "running_mean": {
+          "is_quantized": "False"
+        },
+        "running_var": {
+          "is_quantized": "False"
+        }
+      },
+      "input_dtype": "int8",
+      "output_dtype": "int8"
+    }
+  },
+  "supergroups": [
+    {
+      "op_list": [
+        "Conv",
+        "Relu"
+      ]
+    },
+    {
+      "op_list": [
+        "Conv",
+        "Clip"
+      ]
+    },
+    {
+      "op_list": [
+        "ConvTranspose",
+        "Relu"
+      ]
+    },
+    {
+      "op_list": [
+        "Add",
+        "Relu"
+      ]
+    }
+  ],
+  "model_input": {
+    "is_input_quantized": "True"
+  },
+  "model_output": {}
+}
