@@ -67,7 +67,7 @@ postprocess:
     model_type: detection
 
 calibration_data:
-    image_url:  workdrive.zohoexternal.com/external/8f46f6cf45c83acf7411ce40a0b366bbe8b4a70c37daa1ce354cce5ae61f0f4c/download?directDownload=true
+    image_url:
     quantize: ../output/quant
     verify: null
     quantize_list: ./calibration_image_set.txt
