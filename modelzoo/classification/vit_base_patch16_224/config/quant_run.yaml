@@ -88,7 +88,7 @@ postprocess:
 
 
 calibration_data:
-    image_url: workdrive.zohoexternal.com/external/8fe8a4116c9f02d7a0d269f7b343b1ecd7d5ef23bb3aaab4a8fd87aa338e9f3f/download?directDownload=true
+    image_url:
     quantize: ../output/quant
     verify: null
     quantize_list: null
